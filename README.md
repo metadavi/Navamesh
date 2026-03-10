@@ -48,7 +48,7 @@ This repo contains the Python bridge that:
   "transportMechanism":"TRANSPORT_LORA"
 }`   
 
-### GIS pOSTION (FIXED POSITION OR position_app packets)
+### GIS Position (FIXED POSITION OR position_app packets)
 - `farm/nodes/<fromId>/link`
   Example Payload:
   `{"ts":1772844000,"fromId":"!86b0c98d","lat":26.3979008,"lon":-80.084992,"alt":4}`
@@ -93,14 +93,8 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "farm/test" -m "hello"`
 
 ## Run the bridge
 
-Moisture Calibration (ADC_DRY / ADC_WET)
-
-The soil sensor reports a raw ADC value (e.g. `MOISTURE_RAW=324`). To convert raw readings into a moisture percentage, the bridge uses two calibration points:
-
-- `ADC_DRY`: average raw reading when the sensor is completely dry (air / dry soil)
-- `ADC_WET`: average raw reading when the sensor is fully wet (water / saturated soil)
-
 ### 1) Configure the script
+
 open the src/mesh_to_mqtt.py and set: 
 -SERIAL_PORT to your gatways COM port
 -PRIVATE_CHANNEL_INDEX = 1
