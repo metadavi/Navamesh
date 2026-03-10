@@ -1,18 +1,35 @@
-# local env
+# Local env / secrets
 .env
+.env.*
+!.env.example
 
-# venvs
+# Virtual environments
 .venv/
 venv/
 env/
 
-# python cache
+# Python cache
 __pycache__/
 *.py[cod]
 
-# vscode
+# VS Code / IDE
 .vscode/
+.idea/
 
 # OS junk
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Config exports (avoid committing keys)
+*.yaml
+*.yml
+
+# Databases / data folders
+*.db
+data/
+
+# Old single-file bridge (do not commit)
+mesh_to_mqtt.py

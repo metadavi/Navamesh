@@ -1,8 +1,8 @@
 # Navamesh — Private Meshtastic → MQTT Gateway (Offline-First)
 
-Navamesh is an **offline-first telemetry pipeline** that bridges a **private Meshtastic LoRa mesh channel** into a **local MQTT broker (Mosquitto)** running on a MiniPC (house/gateway node). It publishes both **raw mesh packets** and **clean, structured topics** for soil moisture, link quality (RSSI/SNR), and GIS position.
+Navamesh is an **offline-first telemetry pipeline** that bridges a **private Meshtastic LoRa mesh channel** into a **local MQTT broker (Mosquitto)** running on a MiniPC (house/gateway node). It publishes both **raw mesh packets** and **clean, structured topics** for soil moisture, link quality (RSSI/SNR), GIS position, and battery telemetry.
 
-This repo contains the Python bridge that:
+This repo contains the modular Python bridge that:
 - Reads packets from a **USB-connected Meshtastic gateway radio** (RAK4631 / Heltec / etc.)
 - Filters traffic to a **private channel** (e.g., `navamesh`, channel index `1`)
 - Publishes into Mosquitto on `127.0.0.1:1883`
@@ -15,29 +15,44 @@ This repo contains the Python bridge that:
 **Field node(s)** (sensor radios)  
 → **Meshtastic LoRa mesh (private channel + PSK)**  
 → **Gateway radio (USB serial to MiniPC)**  
-→ **Python bridge (`mesh_to_mqtt.py`)**  
+→ **Navamesh Python Bridge (`src/main.py`)**  
 → **Mosquitto (MQTT broker, local)**  
 → **Subscribers** (CLI, DB writer, dashboard, alerts)
 
 ---
 
-## What You Get (MQTT Topic Schema)
+## MQTT Topic Schema
 
-### Clean sensor topics
-- `farm/sensors/soil/<fromId>/raw`  
-  Example payload:
-  ```json
-  {"value":324,"fromId":"!86b0c98d","ts":1772843516}
+### Raw / Debug (what the gateway receives)
+- `farm/raw/rx` — all bridged packets (JSON)
+- `farm/raw/text` — text packets (JSON)
 
-- `farm/sensors/soil/<fromId>/percent`
-  Example payload:
-   ```json
-   {"value":100.0,"fromId":"!86b0c98d","ts":1772843516}
+Subscribe:
+```powershell
+mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
-### Link Quality (strength/Mesh Path)
-- `farm/nodes/<fromId>/link`
-  Example Payload:
-  `{
+##Soil Moisture (clean topics from text messages like MOISTURE_RAW=585)
+
+-`farm/sensors/soil/<fromId>/raw`
+
+-`farm/sensors/soil/<fromId>/percent`
+
+### Example Payloads:
+
+-`{"value":324,"fromId":"!86b0c98d","ts":1772843516}`
+
+-`{"value":100.0,"fromId":"!86b0c98d","ts":1772843516}`
+
+###Subscribe:
+-`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/sensors/#" -v'
+
+##Link Quality (RSSI/SNR + hop info)
+
+-`farm/nodes/<fromId>/link`
+
+###Example Payload:
+ 
+`{
   "ts":1772843634,
   "fromId":"!86b0c98d",
   "rxRssi":-36,
@@ -46,116 +61,100 @@ This repo contains the Python bridge that:
   "hopStart":3,
   "relayNode":141,
   "transportMechanism":"TRANSPORT_LORA"
-}`   
+}`
 
-### GIS Position (FIXED POSITION OR position_app packets)
-- `farm/nodes/<fromId>/link`
-  Example Payload:
-  `{"ts":1772844000,"fromId":"!86b0c98d","lat":26.3979008,"lon":-80.084992,"alt":4}`
+###Subscribe:
 
-### Raw/Debug topic (filtered by the private channel)
--`farm/raw/rx (all packets that pass filtering, JSON)`
-
--`farm/raw/text (text packets that pass filtering, JSON)`
-
-
-## Requirements
-
-### Software
-- Mosquitto MQTT broker installed and running on the MiniPC
-  
-- python 3.x
-  
-### Dependencies:
--meshtastic
-
--paho-mqtt
-
--pypubsub
-
-## Hardware
-At least two meshtastic nodes:
-- Gateway Node connected via USB to the MiniPC
-  
-- Sensor/Field nodes on the same private mesh channel
-
-
-## Private Channel Set Up (Meshtastic)
-
-This Pipeline assumes sensor traffic is sent on a private channel, for example: 
-
--Channel name: navamesh:
-
--Channel Index: 1
-
--Shared PSK: must match across nodes
-
-## Mosquitto (broker) Setup
-Check if mosquitto is listening on 1883:
-`netstat -an | findstr 1883`
-
-Local Test:
-`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/test" -v
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "farm/test" -m "hello"`
-
-## Run the bridge
-
-### 1) Configure the script
-
-open the src/mesh_to_mqtt.py and set: 
--SERIAL_PORT to your gatways COM port
-
--PRIVATE_CHANNEL_INDEX = 1
-
-Moisture Calibration (ADC_DRY / ADC_WET)
-The soil sensor reports a raw ADC value (e.g. `MOISTURE_RAW=324`). To convert raw readings into a moisture percentage, the bridge uses two calibration points:
-
-- `ADC_DRY`: average raw reading when the sensor is completely dry (air / dry soil)
-- `ADC_WET`: average raw reading when the sensor is fully wet (water / saturated soil)
-
-  
-### 2) Start the bridge
--`python .\src\mesh_to_mqtt.py`
-
-or
-
--`.\scripts\run_bridge.ps1`
-
-## Subscribe Commands
-
-### Clean Sensor Data:
--`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/sensors/#" -v`
-
-### Link Quality (RSSI/SNR)
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/link" -v`
 
-### Position/GIS
+##GIS Position (fixed position or POSITION_APP packets)
+
+-`farm/nodes/<fromId>/position
+
+###Example Payload:
+
+-`{"ts":1772844000,"fromId":"!86b0c98d","lat":26.3979008,"lon":-80.084992,"alt":4}`
+
+###Subscribe:
+
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/position" -v`
 
-### RAW debug streams
--`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v`
+##Battery (from TELEMETRY_APP device metrics)
 
-### EVERYTHING
+-`farm/nodes/<fromId>/battery
+
+###Subscribe:
+
+-`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/battery" -v`
+
+##Requirements
+
+###Software: 
+
+1) Mosquitto MQTT broker installed and running
+2)python 3.x
+
+###Python Dependencies:
+
+-`pip install -r requirements.txt`
+
+###Hardware: 
+
+At least two meshtastic nodes:
+1) Gateway node connected via USB to the MiniPc
+2) Sensor/field nodes on the same private mesh channel 
+
+##Private Channel Setup (Meshtastic)
+
+The pipeline assumes sensor traffic is sent on a private channel, for example:
+- channel name: navamesh
+-channel index: 1
+- Shared PSK: must match across the nodes
+
+#Mosquitto Setup:
+
+Check if mosquito is listening on port 1883:
+
+-`netstat -an | findstr 1883`
+
+Local Test:
+
+-`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/test" -v`
+
+-`mosquitto_pub -h 127.0.0.1 -p 1883 -t "farm/test" -m "hello"`
+
+##Run the bridge:
+
+`# Activate venv if you use one
+.\.venv\Scripts\activate
+
+# Ensure runtime can import from src/
+$env:PYTHONPATH=".\src"
+
+python .\src\main.py`
+
+## Moisture Calibration (ADC_DRY/ADC_WET)
+The soil sensor reports a raw ADC value (e.g. MOISTURE_RAW=324). To convert raw readings into a moisture percentage, the bridge uses two calibration points:
+-`ADC_DRY: average raw reading when the sensor is completely dry (air / dry soil)`
+
+-`ADC_WET: average raw reading when the sensor is fully wet (water / saturated soil)`
+
+##Trouble Shooting:
+Port in use / access denied
+Only one process can open the COM port at a time.
+
+-Stop the bridge before running meshtastic --listen
+
+-Close other apps using the serial port
+
+Verify mesh packets are being received (no MQTT)
+Stop the bridge, then:
+
+-`meshtastic --port COM4 --listen`
+
+Verify:
+
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "#" -v`
-
-# Debugging/Troubleshooting
-
-## Verify that mesh packets are being heard (no mqtt)
--`meshtastic --port COM3 --listen`
-
-## If no messages are being delivered (verify mosquitto is running/listening) 
-1) `netstat -an | findstr 1883`
-2) Verify that local publish/subscribe work (farm/test example above)
-3) Verify that the bridge prints [MQTT] pubslished ... lines
-
-
-# Notes on positions (no GPS module)
-
-If your node has no GPS module:
-- Use fixed position
-  
-- The device can broadcast POSITION_APP packets (LOC_MANUAL)
-  
 
 
 

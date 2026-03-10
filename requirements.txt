@@ -1,0 +1,5 @@
+meshtastic
+paho-mqtt
+pypubsub
+python-dotenv
+pyserial
