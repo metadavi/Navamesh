@@ -55,6 +55,7 @@ This repo contains the Python bridge that:
 
 ### Raw/Debug topic (filtered by the private channel)
 -`farm/raw/rx (all packets that pass filtering, JSON)`
+
 -`farm/raw/text (text packets that pass filtering, JSON)`
 
 
