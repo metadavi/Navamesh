@@ -116,7 +116,9 @@ The soil sensor reports a raw ADC value (e.g. `MOISTURE_RAW=324`). To convert ra
   
 ### 2) Start the bridge
 -`python .\src\mesh_to_mqtt.py`
+
 or
+
 -`.\scripts\run_bridge.ps1`
 
 ### Subscribe Commands
@@ -150,7 +152,8 @@ or
 ## Notes on positions (no GPS module)
 
 If your node has no GPS module:
-- Use fixed position 
+- Use fixed position
+  
 - The device can broadcast POSITION_APP packets (LOC_MANUAL)
   
 
