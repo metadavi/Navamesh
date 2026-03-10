@@ -121,35 +121,35 @@ or
 
 -`.\scripts\run_bridge.ps1`
 
-### Subscribe Commands
+## Subscribe Commands
 
-# Clean Sensor Data:
+### Clean Sensor Data:
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/sensors/#" -v`
 
-# Link Quality (RSSI/SNR)
+### Link Quality (RSSI/SNR)
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/link" -v`
 
-# Position/GIS
+### Position/GIS
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/position" -v`
 
-# RAW debug streams
+### RAW debug streams
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v`
 
-# EVERYTHING
+### EVERYTHING
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "#" -v`
 
-## Debugging/Troubleshooting
+# Debugging/Troubleshooting
 
-# Verify that mesh packets are being heard (no mqtt)
+## Verify that mesh packets are being heard (no mqtt)
 -`meshtastic --port COM3 --listen`
 
-# If no messages are being delivered (verify mosquitto is running/listening) 
+## If no messages are being delivered (verify mosquitto is running/listening) 
 1) `netstat -an | findstr 1883`
 2) Verify that local publish/subscribe work (farm/test example above)
 3) Verify that the bridge prints [MQTT] pubslished ... lines
 
 
-## Notes on positions (no GPS module)
+# Notes on positions (no GPS module)
 
 If your node has no GPS module:
 - Use fixed position
