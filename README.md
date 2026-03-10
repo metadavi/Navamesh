@@ -62,16 +62,20 @@ This repo contains the Python bridge that:
 
 ### Software
 - Mosquitto MQTT broker installed and running on the MiniPC
+  
 - python 3.x
   
 ### Dependencies:
 -meshtastic
+
 -paho-mqtt
+
 -pypubsub
 
 ## Hardware
 At least two meshtastic nodes:
 - Gateway Node connected via USB to the MiniPC
+  
 - Sensor/Field nodes on the same private mesh channel
 
 
@@ -80,7 +84,9 @@ At least two meshtastic nodes:
 This Pipeline assumes sensor traffic is sent on a private channel, for example: 
 
 -Channel name: navamesh:
+
 -Channel Index: 1
+
 -Shared PSK: must match across nodes
 
 ## Mosquitto (broker) Setup
@@ -97,6 +103,7 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "farm/test" -m "hello"`
 
 open the src/mesh_to_mqtt.py and set: 
 -SERIAL_PORT to your gatways COM port
+
 -PRIVATE_CHANNEL_INDEX = 1
 
 Moisture Calibration (ADC_DRY / ADC_WET)
