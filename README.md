@@ -28,7 +28,7 @@ This repo contains the modular Python bridge that:
 - `farm/raw/text` — text packets (JSON)
 
 Subscribe:
-```powershell
+
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
 ##Soil Moisture (clean topics from text messages like MOISTURE_RAW=585)
