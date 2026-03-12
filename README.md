@@ -27,7 +27,7 @@ This repo contains the modular Python bridge that:
 - `farm/raw/rx` — all bridged packets (JSON)
 - `farm/raw/text` — text packets (JSON)
 
-Subscribe:
+### Subscribe:
 
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
@@ -43,14 +43,14 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
 -`{"value":100.0,"fromId":"!86b0c98d","ts":1772843516}`
 
-###Subscribe:
+### Subscribe:
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/sensors/#" -v'
 
-##Link Quality (RSSI/SNR + hop info)
+## Link Quality (RSSI/SNR + hop info)
 
 -`farm/nodes/<fromId>/link`
 
-###Example Payload:
+### Example Payload:
  
 `{
   "ts":1772843634,
@@ -63,55 +63,55 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
   "transportMechanism":"TRANSPORT_LORA"
 }`
 
-###Subscribe:
+### Subscribe:
 
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/link" -v`
 
-##GIS Position (fixed position or POSITION_APP packets)
+## GIS Position (fixed position or POSITION_APP packets)
 
 -`farm/nodes/<fromId>/position
 
-###Example Payload:
+### Example Payload:
 
 -`{"ts":1772844000,"fromId":"!86b0c98d","lat":26.3979008,"lon":-80.084992,"alt":4}`
 
-###Subscribe:
+### Subscribe:
 
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/position" -v`
 
-##Battery (from TELEMETRY_APP device metrics)
+## Battery (from TELEMETRY_APP device metrics)
 
 -`farm/nodes/<fromId>/battery
 
-###Subscribe:
+### Subscribe:
 
 -`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/nodes/+/battery" -v`
 
-##Requirements
+## Requirements
 
-###Software: 
+### Software: 
 
 1) Mosquitto MQTT broker installed and running
 2)python 3.x
 
-###Python Dependencies:
+### Python Dependencies:
 
 -`pip install -r requirements.txt`
 
-###Hardware: 
+### Hardware: 
 
 At least two meshtastic nodes:
 1) Gateway node connected via USB to the MiniPc
 2) Sensor/field nodes on the same private mesh channel 
 
-##Private Channel Setup (Meshtastic)
+## Private Channel Setup (Meshtastic)
 
 The pipeline assumes sensor traffic is sent on a private channel, for example:
 - channel name: navamesh
 -channel index: 1
 - Shared PSK: must match across the nodes
 
-#Mosquitto Setup:
+# Mosquitto Setup:
 
 Check if mosquito is listening on port 1883:
 
@@ -123,7 +123,7 @@ Local Test:
 
 -`mosquitto_pub -h 127.0.0.1 -p 1883 -t "farm/test" -m "hello"`
 
-##Run the bridge:
+## Run the bridge:
 
 `# Activate venv if you use one
 .\.venv\Scripts\activate
@@ -139,7 +139,7 @@ The soil sensor reports a raw ADC value (e.g. MOISTURE_RAW=324). To convert raw 
 
 -`ADC_WET: average raw reading when the sensor is fully wet (water / saturated soil)`
 
-##Trouble Shooting:
+## Trouble Shooting:
 Port in use / access denied
 Only one process can open the COM port at a time.
 
