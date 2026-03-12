@@ -31,7 +31,7 @@ This repo contains the modular Python bridge that:
 
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
-##Soil Moisture (clean topics from text messages like MOISTURE_RAW=585)
+## Soil Moisture (clean topics from text messages like MOISTURE_RAW=585)
 
 -`farm/sensors/soil/<fromId>/raw`
 
