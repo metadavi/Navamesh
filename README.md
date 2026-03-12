@@ -44,7 +44,7 @@ This repo contains the modular Python bridge that:
 -`{"value":100.0,"fromId":"!86b0c98d","ts":1772843516}`
 
 ### Subscribe:
--`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/sensors/#" -v'
+-`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/sensors/#" -v`
 
 ## Link Quality (RSSI/SNR + hop info)
 
@@ -108,7 +108,7 @@ At least two meshtastic nodes:
 
 The pipeline assumes sensor traffic is sent on a private channel, for example:
 - channel name: navamesh
--channel index: 1
+- channel index: 1
 - Shared PSK: must match across the nodes
 
 # Mosquitto Setup:
