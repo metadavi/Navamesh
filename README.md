@@ -29,7 +29,7 @@ This repo contains the modular Python bridge that:
 
 ### Subscribe:
 
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
+-`mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v`
 
 ## Soil Moisture (clean topics from text messages like MOISTURE_RAW=585)
 
