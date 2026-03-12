@@ -69,7 +69,7 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
 ## GIS Position (fixed position or POSITION_APP packets)
 
--`farm/nodes/<fromId>/position
+-`farm/nodes/<fromId>/position`
 
 ### Example Payload:
 
@@ -81,7 +81,7 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "farm/raw/#" -v
 
 ## Battery (from TELEMETRY_APP device metrics)
 
--`farm/nodes/<fromId>/battery
+-`farm/nodes/<fromId>/battery`
 
 ### Subscribe:
 
@@ -125,8 +125,8 @@ Local Test:
 
 ## Run the bridge:
 
-`# Activate venv if you use one
-.\.venv\Scripts\activate
+### Activate venv if you use one
+`.\.venv\Scripts\activate`
 
 # Ensure runtime can import from src/
 $env:PYTHONPATH=".\src"
