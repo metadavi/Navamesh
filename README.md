@@ -128,7 +128,7 @@ Local Test:
 ### Activate venv if you use one
 `.\.venv\Scripts\activate`
 
-# Ensure runtime can import from src/
+### Ensure runtime can import from src/
 $env:PYTHONPATH=".\src"
 
 python .\src\main.py`
